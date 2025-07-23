@@ -11,7 +11,11 @@ This repository is the open source code for our ICASSP 2023 paper and IEEE/ACM T
 ## Code
 
 ### SFM fine-tuning
+You can find an example script for fine-tuning the Wav2Vec2.0 model in `Fine-tuning/run_finetuning_w2v_large.py`.
 ### SSL Speech Representation Extraction 
+1. Bottleneck Module
+2. Fine-tuning 
+3. Extraction
 ### A2A Inversion
 ### SFM integration
 
