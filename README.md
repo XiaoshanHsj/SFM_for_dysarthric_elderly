@@ -12,11 +12,36 @@ This repository is the open source code for our ICASSP 2023 paper and IEEE/ACM T
 
 ### SFM fine-tuning
 You can find an example script for fine-tuning the Wav2Vec2.0 model in `Fine-tuning/run_finetuning_w2v_large.py`.
+
+### Inference
+`Fine-tuning/decode.py`
+
 ### SSL Speech Representation Extraction 
-1. Bottleneck Module
-2. Fine-tuning 
+1. Bottleneck Module  
+`Fine-tuning/Bottleneck_module.py`  
+This bottleneck module can be inserted either at the positions investigated in our paper or at alternative locations.  
+2. Fine-tuning  
+You need to add the dim hyperparameter in config `transformers/models/wav2vec2/configuration_wav2vec2.py`, then in the training script,
+```
+model = Wav2Vec2ForCTC.from_pretrained(
+    model_path,
+    ctc_loss_reduction="mean",
+    vocab_size=len(processor.tokenizer.get_vocab()),
+    pad_token_id=processor.tokenizer.pad_token_id,
+    cache_dir="large_model_cache",
+    dim=256,  # the dim of bottleneck features
+)
+```
+also ignore the bn_features during inference, as 
+```
+model.config.keys_to_ignore_at_inference = ["bn_features"]
+```
+
 3. Extraction
+After fine-tuning the SFM with Bottleneck Module, you can refer `Fine-tuning/get_bn_feature.py` script to extract SSL speech features.  
+
 ### A2A Inversion
+
 ### SFM integration
 
 ## Ciataions
