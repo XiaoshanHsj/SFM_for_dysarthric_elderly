@@ -1,4 +1,4 @@
-# SFM_for_dysarthric_elderly
+# Self-Supervised ASR Models and Features for Dysarthric and Elderly Speech Recognition
 
 This repository is the open source code for our ICASSP 2023 paper and IEEE/ACM TASLP:
 
