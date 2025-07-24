@@ -52,8 +52,44 @@ python3 A2A_inversion/main.py --test
 ```
 
 ### SFM integration
-For Kaldi recipes, please refer to [this scripts](https://github.com/kaldi-asr/kaldi/blob/master/egs/swbd/s5c/local/chain/tuning/run_tdnn_7q.sh).  
-For Conformer recipes, please refer to [this yaml](https://github.com/espnet/espnet/blob/master/egs2/librispeech/asr1/conf/tuning/train_asr_conformer.yaml).
+For Kaldi recipes, please refer to [this recipe](https://github.com/kaldi-asr/kaldi/blob/master/egs/swbd/s5c/local/chain/tuning/run_tdnn_7q.sh).  
+For Conformer recipes, please refer to [this recipe](https://github.com/espnet/espnet/blob/master/egs/swbd/asr1/run.sh) and [this yaml](https://github.com/espnet/espnet/blob/master/egs/swbd/asr1/conf/tuning/train_pytorch_conformer.yaml).  
+
+**Time-synchronous frame-level joint decoding**  
+For implementation details, please refer to [this script](https://github.com/kaldi-asr/kaldi/blob/master/egs/wsj/s5/steps/nnet3/decode_score_fusion.sh).  
+This script can be easily extended to support fusion of more than two hybrid TDNN systems.
+
+**Cross-system multi-pass decoding**
+1. Get the N-best hypotheses  
+Here are examples for Kaldi nnet3 TDNN and Conformer  
+Kaldi:  
+```
+cat $dir/lat.*.gz |\
+gunzip -c - |\
+    lattice-to-nbest --acoustic-scale=0.1 --n=30 ark:- ark:$dir/nbest/30best
+
+nbest-to-linear ark,t:$dir/nbest/30best ark,t:$dir/nbest/ali ark,t:$dir/nbest/words \
+        ark,t:$dir/nbest/lmscore ark,t:$dir/nbest/acscore
+cat $dir/nbest/words | utils/int2sym.pl -f 2- \
+        $lang/words.txt > $dir/nbest/words.txt
+```
+Conformer:  
+```
+${decode_cmd} JOB=1:${nj} ${expdir}/${decode_dir}/log/decode.JOB.log \
+            asr_recog.py \
+            --config ${decode_config} \
+            --ngpu ${ngpu} \
+            --backend ${backend} \
+            --recog-json ${feat_recog_dir}/split${nj}utt/data_${bpemode}${nbpe}.JOB.json \
+            --result-label ${expdir}/${decode_dir}/data.JOB.json \
+            --model ${expdir}/results/${recog_model} \
+            --nbest 30 \
+```
+2. Obtain SFM Scores  
+create `*.csv` files based on the N-best hypotheses, then input these hypotheses into the fine-tuned SFM to compute the CTC loss, which will be used as the SFM scores.
+3. Obtain the final interpolated scores.   
+You can refer to the script `SFM_integration/get_w2v_tdnn_score_and_sort.py` to interpolate the scores of different systems.
+
 ## Ciataions
 
 If you find our work inspiring or use our codebase in your research, please consider giving a star ⭐ and citations.
