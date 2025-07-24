@@ -41,6 +41,15 @@ model.config.keys_to_ignore_at_inference = ["bn_features"]
 After fine-tuning the SFM with Bottleneck Module, you can refer `Fine-tuning/get_bn_feature.py` script to extract SSL speech features.  
 
 ### A2A Inversion
+You can refer to the code in the `A2A_inversion` directory, where you will need to prepare `*.scp` files.  
+To train the A2A inversion model, run:
+```
+python3 A2A_inversion/main.py --train
+```
+To generate articulatory features, run:
+```
+python3 A2A_inversion/main.py --test
+```
 
 ### SFM integration
 
