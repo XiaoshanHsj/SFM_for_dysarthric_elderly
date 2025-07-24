@@ -52,7 +52,8 @@ python3 A2A_inversion/main.py --test
 ```
 
 ### SFM integration
-
+For Kaldi recipes, please refer to [this scripts](https://github.com/kaldi-asr/kaldi/blob/master/egs/swbd/s5c/local/chain/tuning/run_tdnn_7q.sh).  
+For Conformer recipes, please refer to [this yaml](https://github.com/espnet/espnet/blob/master/egs2/librispeech/asr1/conf/tuning/train_asr_conformer.yaml).
 ## Ciataions
 
 If you find our work inspiring or use our codebase in your research, please consider giving a star ⭐ and citations.
